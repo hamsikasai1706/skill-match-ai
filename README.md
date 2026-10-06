@@ -124,3 +124,4 @@ After changing the OpenAPI contract, regenerate and type-check the clients with:
 ```bash
 pnpm --filter @workspace/api-spec run codegen
 ```
+# skillmatch-ai
