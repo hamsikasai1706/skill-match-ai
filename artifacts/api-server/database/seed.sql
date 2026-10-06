@@ -1,0 +1,132 @@
+-- Development/demo seed data. The reserved .example account is deliberately
+-- not loginable; replace jobs with real employer-owned listings in production.
+INSERT INTO public.users (id, name, email, password_hash, role)
+VALUES (
+  'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  'SkillMatch Demo Employer',
+  'jobs@skillmatch.example',
+  'DEMO_ACCOUNT_NOT_LOGINABLE',
+  'employer'
+)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.skills (name, category) VALUES
+  ('Python', 'Programming'),
+  ('Java', 'Programming'),
+  ('JavaScript', 'Programming'),
+  ('TypeScript', 'Programming'),
+  ('React', 'Frontend'),
+  ('Node.js', 'Backend'),
+  ('Express.js', 'Backend'),
+  ('SQL', 'Data'),
+  ('PostgreSQL', 'Data'),
+  ('MongoDB', 'Data'),
+  ('Git', 'Tools'),
+  ('GitHub', 'Tools'),
+  ('Docker', 'DevOps'),
+  ('AWS', 'Cloud'),
+  ('Machine Learning', 'AI & Data'),
+  ('Data Analysis', 'AI & Data'),
+  ('FastAPI', 'Backend'),
+  ('Spring Boot', 'Backend'),
+  ('Figma', 'Design'),
+  ('UI/UX', 'Design'),
+  ('REST APIs', 'Backend'),
+  ('Redis', 'Data'),
+  ('Kubernetes', 'DevOps'),
+  ('TensorFlow', 'AI & Data'),
+  ('PyTorch', 'AI & Data')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO public.jobs (
+  id, title, company, description, location, work_mode, category,
+  experience_min, experience_max, salary_min, salary_max, created_by, status
+) VALUES
+  ('10000000-0000-4000-8000-000000000001', 'Backend Developer', 'TechNova',
+   'Build reliable API services, improve database performance, and collaborate with product teams to ship secure backend features.',
+   'Bengaluru, India', 'hybrid', 'Engineering', 2, 5, 900000, 1800000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000002', 'Full Stack Developer', 'Northstar Labs',
+   'Own product features from accessible React interfaces through typed APIs and production database changes.',
+   'Remote, India', 'remote', 'Engineering', 2, 5, 1000000, 2000000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000003', 'Python Developer', 'Clearwater Systems',
+   'Develop Python services and data workflows, write dependable tests, and improve performance in a growing platform.',
+   'Pune, India', 'hybrid', 'Engineering', 1, 4, 700000, 1500000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000004', 'Data Analyst', 'Aster Analytics',
+   'Turn operational data into clear analysis, maintain SQL models, and explain findings to cross-functional partners.',
+   'Mumbai, India', 'onsite', 'Data', 1, 3, 600000, 1200000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000005', 'AI/ML Intern', 'Applied Intelligence Co.',
+   'Support supervised learning experiments, prepare datasets, and document reproducible model evaluation.',
+   'Remote, India', 'remote', 'AI & Data', 0, 1, 240000, 480000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000006', 'Frontend Developer', 'Brightline Studio',
+   'Create responsive product interfaces with React and TypeScript, working closely with design and accessibility partners.',
+   'Delhi, India', 'hybrid', 'Engineering', 1, 4, 700000, 1500000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000007', 'Software Engineer', 'Orbit Commerce',
+   'Deliver well-tested product capabilities across services and web clients in a collaborative engineering team.',
+   'Bengaluru, India', 'onsite', 'Engineering', 2, 6, 1200000, 2400000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000008', 'DevOps Engineer', 'CloudHarbor',
+   'Improve deployment reliability, automate infrastructure workflows, and strengthen observability for cloud services.',
+   'Hyderabad, India', 'hybrid', 'DevOps', 2, 5, 1100000, 2200000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000009', 'Node.js Backend Intern', 'Mosaic Software',
+   'Help maintain REST APIs, add unit-tested endpoints, and learn production engineering practices with a mentor.',
+   'Remote, India', 'remote', 'Engineering', 0, 1, 180000, 360000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active'),
+  ('10000000-0000-4000-8000-000000000010', 'Junior Data Engineer', 'Meridian Data',
+   'Build and validate data pipelines, maintain SQL transformations, and help improve data quality monitoring.',
+   'Chennai, India', 'hybrid', 'Data', 1, 3, 650000, 1300000,
+   'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'active')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.job_skills (job_id, skill_id, skill_type, importance)
+SELECT mapping.job_id::uuid, skills.id, mapping.skill_type, mapping.importance
+FROM (VALUES
+  ('10000000-0000-4000-8000-000000000001', 'Python', 'required', 5),
+  ('10000000-0000-4000-8000-000000000001', 'SQL', 'required', 4),
+  ('10000000-0000-4000-8000-000000000001', 'REST APIs', 'required', 4),
+  ('10000000-0000-4000-8000-000000000001', 'Docker', 'preferred', 3),
+  ('10000000-0000-4000-8000-000000000001', 'PostgreSQL', 'preferred', 3),
+  ('10000000-0000-4000-8000-000000000002', 'TypeScript', 'required', 5),
+  ('10000000-0000-4000-8000-000000000002', 'React', 'required', 5),
+  ('10000000-0000-4000-8000-000000000002', 'Node.js', 'required', 4),
+  ('10000000-0000-4000-8000-000000000002', 'PostgreSQL', 'preferred', 3),
+  ('10000000-0000-4000-8000-000000000003', 'Python', 'required', 5),
+  ('10000000-0000-4000-8000-000000000003', 'FastAPI', 'required', 4),
+  ('10000000-0000-4000-8000-000000000003', 'SQL', 'preferred', 3),
+  ('10000000-0000-4000-8000-000000000004', 'SQL', 'required', 5),
+  ('10000000-0000-4000-8000-000000000004', 'Data Analysis', 'required', 5),
+  ('10000000-0000-4000-8000-000000000004', 'Python', 'preferred', 3),
+  ('10000000-0000-4000-8000-000000000004', 'PostgreSQL', 'preferred', 2),
+  ('10000000-0000-4000-8000-000000000005', 'Python', 'required', 5),
+  ('10000000-0000-4000-8000-000000000005', 'Machine Learning', 'required', 5),
+  ('10000000-0000-4000-8000-000000000005', 'TensorFlow', 'preferred', 4),
+  ('10000000-0000-4000-8000-000000000005', 'PyTorch', 'preferred', 4),
+  ('10000000-0000-4000-8000-000000000006', 'React', 'required', 5),
+  ('10000000-0000-4000-8000-000000000006', 'TypeScript', 'required', 4),
+  ('10000000-0000-4000-8000-000000000006', 'JavaScript', 'required', 4),
+  ('10000000-0000-4000-8000-000000000006', 'Figma', 'preferred', 2),
+  ('10000000-0000-4000-8000-000000000007', 'Java', 'required', 4),
+  ('10000000-0000-4000-8000-000000000007', 'Spring Boot', 'required', 4),
+  ('10000000-0000-4000-8000-000000000007', 'SQL', 'required', 3),
+  ('10000000-0000-4000-8000-000000000007', 'Git', 'preferred', 2),
+  ('10000000-0000-4000-8000-000000000008', 'Docker', 'required', 5),
+  ('10000000-0000-4000-8000-000000000008', 'AWS', 'required', 4),
+  ('10000000-0000-4000-8000-000000000008', 'Kubernetes', 'required', 4),
+  ('10000000-0000-4000-8000-000000000008', 'Redis', 'preferred', 2),
+  ('10000000-0000-4000-8000-000000000009', 'JavaScript', 'required', 5),
+  ('10000000-0000-4000-8000-000000000009', 'Node.js', 'required', 5),
+  ('10000000-0000-4000-8000-000000000009', 'Express.js', 'required', 4),
+  ('10000000-0000-4000-8000-000000000009', 'REST APIs', 'preferred', 3),
+  ('10000000-0000-4000-8000-000000000010', 'Python', 'required', 4),
+  ('10000000-0000-4000-8000-000000000010', 'SQL', 'required', 5),
+  ('10000000-0000-4000-8000-000000000010', 'PostgreSQL', 'required', 4),
+  ('10000000-0000-4000-8000-000000000010', 'AWS', 'preferred', 2)
+) AS mapping(job_id, skill_name, skill_type, importance)
+JOIN public.skills ON skills.name = mapping.skill_name
+ON CONFLICT (job_id, skill_id, skill_type) DO NOTHING;

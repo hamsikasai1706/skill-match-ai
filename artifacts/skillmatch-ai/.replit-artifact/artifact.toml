@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "SkillMatch AI"
+description = "A full-stack skill-based job matching platform for candidates and employers, with persistent profiles, transparent deterministic match scores, job search, saved jobs, skill-gap analysis, and secure AI explanations."
+version = "1.0.0"
+id = "artifacts/skillmatch-ai"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25907
+
+[services.development]
+run = "pnpm --filter @workspace/skillmatch-ai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/skillmatch-ai", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/skillmatch-ai/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25907"
+BASE_PATH = "/"

@@ -1,0 +1,1 @@
+- [SkillMatch database](skillmatch-supabase.md) — keep the user-selected Supabase project authoritative; never switch this app to Replit PostgreSQL.

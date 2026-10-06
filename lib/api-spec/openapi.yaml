@@ -3,13 +3,20 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: SkillMatch AI application API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: profile
+  - name: skills
+  - name: jobs
+  - name: matches
+  - name: saved-jobs
+  - name: dashboards
+  - name: ai
 paths:
   /healthz:
     get:
@@ -24,7 +31,537 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthEnvelope"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "500": { $ref: "#/components/responses/ServerError" }
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Sign in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthEnvelope"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/ServerError" }
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Signed out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Current account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Candidate profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    put:
+      operationId: updateProfile
+      tags: [profile]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileEnvelope"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /skills:
+    get:
+      operationId: listSkills
+      tags: [skills]
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+          description: Optional skill name search
+      responses:
+        "200":
+          description: Searchable skills
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SkillsEnvelope"
+  /profile/skills:
+    get:
+      operationId: listProfileSkills
+      tags: [profile, skills]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Candidate skills
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CandidateSkillsEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      operationId: addProfileSkill
+      tags: [profile, skills]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CandidateSkillInput"
+      responses:
+        "201":
+          description: Added skill
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CandidateSkillEnvelope"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /profile/skills/{skillId}:
+    put:
+      operationId: updateProfileSkill
+      tags: [profile, skills]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: skillId
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CandidateSkillUpdate"
+      responses:
+        "200":
+          description: Updated candidate skill
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CandidateSkillEnvelope"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      operationId: removeProfileSkill
+      tags: [profile, skills]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: skillId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Removed candidate skill
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /jobs:
+    get:
+      operationId: listJobs
+      tags: [jobs]
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: category
+          schema: { type: string }
+        - in: query
+          name: location
+          schema: { type: string }
+        - in: query
+          name: workMode
+          schema: { $ref: "#/components/schemas/WorkMode" }
+        - in: query
+          name: minExperience
+          schema: { type: number, minimum: 0 }
+        - in: query
+          name: maxExperience
+          schema: { type: number, minimum: 0 }
+        - in: query
+          name: minSalary
+          schema: { type: number, minimum: 0 }
+        - in: query
+          name: maxSalary
+          schema: { type: number, minimum: 0 }
+        - in: query
+          name: minMatch
+          schema: { type: integer, minimum: 0, maximum: 100 }
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [match, newest, salary-high, salary-low]
+      responses:
+        "200":
+          description: Active job listings with deterministic match data when signed in as a candidate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobsEnvelope"
+        "500": { $ref: "#/components/responses/ServerError" }
+    post:
+      operationId: createJob
+      tags: [jobs]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobInput"
+      responses:
+        "201":
+          description: Created job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobEnvelope"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      tags: [jobs]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Job with match details for signed-in candidates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobDetailEnvelope"
+        "404": { $ref: "#/components/responses/NotFound" }
+    put:
+      operationId: updateJob
+      tags: [jobs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobInput"
+      responses:
+        "200":
+          description: Updated job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobEnvelope"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      operationId: deleteJob
+      tags: [jobs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Deleted job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /jobs/{id}/archive:
+    patch:
+      operationId: archiveJob
+      tags: [jobs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Archived job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /matches:
+    get:
+      operationId: listMatches
+      tags: [matches]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Candidate matches sorted by score and recency
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatchesEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /matches/{jobId}:
+    get:
+      operationId: getMatch
+      tags: [matches]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: jobId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Deterministic candidate match for one job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatchEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /saved-jobs:
+    get:
+      operationId: listSavedJobs
+      tags: [saved-jobs]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Candidate saved jobs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedJobsEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /jobs/{id}/save:
+    post:
+      operationId: saveJob
+      tags: [saved-jobs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Saved job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      operationId: unsaveJob
+      tags: [saved-jobs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Removed saved job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /dashboard/candidate:
+    get:
+      operationId: getCandidateDashboard
+      tags: [dashboards]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Candidate dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CandidateDashboardEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /dashboard/employer:
+    get:
+      operationId: getEmployerDashboard
+      tags: [dashboards]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Employer dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployerDashboardEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /skill-gaps:
+    get:
+      operationId: getSkillGaps
+      tags: [matches]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Missing job skills aggregated from actual candidate matches
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SkillGapsEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /ai/match-explanation:
+    post:
+      operationId: getMatchExplanation
+      tags: [ai]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchExplanationInput"
+      responses:
+        "200":
+          description: AI explanation of the backend-calculated match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatchExplanationEnvelope"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    Forbidden:
+      description: Insufficient role or ownership
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    Conflict:
+      description: Resource already exists
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    RateLimited:
+      description: Request limit reached
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    ServiceUnavailable:
+      description: External AI service is not configured or unavailable
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +570,409 @@ components:
           type: string
       required:
         - status
+    Error:
+      type: object
+      properties:
+        message: { type: string }
+        code: { type: string }
+      required: [message, code]
+    ErrorEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: false }
+        error: { $ref: "#/components/schemas/Error" }
+      required: [success, error]
+    SuccessEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { type: object }
+      required: [success, data]
+    Role:
+      type: string
+      enum: [candidate, employer, admin]
+    WorkMode:
+      type: string
+      enum: [remote, hybrid, onsite]
+    Proficiency:
+      type: string
+      enum: [beginner, intermediate, advanced, expert]
+    Skill:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        category: { type: string }
+      required: [id, name, category]
+    CandidateSkill:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        skillId: { type: string, format: uuid }
+        name: { type: string }
+        category: { type: string }
+        proficiency: { $ref: "#/components/schemas/Proficiency" }
+        yearsExperience: { type: number, minimum: 0 }
+      required: [id, skillId, name, category, proficiency, yearsExperience]
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        email: { type: string, format: email }
+        role: { $ref: "#/components/schemas/Role" }
+      required: [id, name, email, role]
+    UserEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/User" }
+      required: [success, data]
+    RegisterInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 2, maxLength: 120 }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 10, maxLength: 128 }
+        role: { $ref: "#/components/schemas/Role" }
+      required: [name, email, password, role]
+    LoginInput:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 1 }
+      required: [email, password]
+    AuthData:
+      type: object
+      properties:
+        token: { type: string }
+        user: { $ref: "#/components/schemas/User" }
+      required: [token, user]
+    AuthEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/AuthData" }
+      required: [success, data]
+    Profile:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        name: { type: string }
+        headline: { type: string }
+        bio: { type: string }
+        experienceYears: { type: number, minimum: 0 }
+        preferredLocation: { type: string }
+        preferredWorkMode: { $ref: "#/components/schemas/WorkMode" }
+        preferredCategories:
+          type: array
+          items: { type: string }
+        skills:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateSkill" }
+        completion: { type: integer, minimum: 0, maximum: 100 }
+      required:
+        [userId, name, headline, bio, experienceYears, preferredLocation, preferredWorkMode, preferredCategories, skills, completion]
+    ProfileEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/Profile" }
+      required: [success, data]
+    ProfileInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 2, maxLength: 120 }
+        headline: { type: string, maxLength: 160 }
+        bio: { type: string, maxLength: 2000 }
+        experienceYears: { type: number, minimum: 0, maximum: 60 }
+        preferredLocation: { type: string, maxLength: 120 }
+        preferredWorkMode: { $ref: "#/components/schemas/WorkMode" }
+        preferredCategories:
+          type: array
+          items: { type: string, minLength: 1, maxLength: 80 }
+          maxItems: 10
+      required: [name, headline, bio, experienceYears, preferredLocation, preferredWorkMode, preferredCategories]
+    CandidateSkillInput:
+      type: object
+      properties:
+        skillId: { type: string, format: uuid }
+        proficiency: { $ref: "#/components/schemas/Proficiency" }
+        yearsExperience: { type: number, minimum: 0, maximum: 60 }
+      required: [skillId, proficiency, yearsExperience]
+    CandidateSkillUpdate:
+      type: object
+      properties:
+        proficiency: { $ref: "#/components/schemas/Proficiency" }
+        yearsExperience: { type: number, minimum: 0, maximum: 60 }
+      required: [proficiency, yearsExperience]
+    CandidateSkillEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/CandidateSkill" }
+      required: [success, data]
+    SkillsEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Skill" }
+      required: [success, data]
+    CandidateSkillsEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateSkill" }
+      required: [success, data]
+    JobSkillInput:
+      type: object
+      properties:
+        skillId: { type: string, format: uuid }
+        importance: { type: integer, minimum: 1, maximum: 5, default: 3 }
+      required: [skillId]
+    JobInput:
+      type: object
+      properties:
+        title: { type: string, minLength: 2, maxLength: 160 }
+        company: { type: string, minLength: 2, maxLength: 160 }
+        description: { type: string, minLength: 20, maxLength: 10000 }
+        location: { type: string, minLength: 2, maxLength: 160 }
+        workMode: { $ref: "#/components/schemas/WorkMode" }
+        category: { type: string, minLength: 2, maxLength: 80 }
+        experienceMin: { type: number, minimum: 0, maximum: 60 }
+        experienceMax: { type: number, minimum: 0, maximum: 60 }
+        salaryMin: { type: number, minimum: 0 }
+        salaryMax: { type: number, minimum: 0 }
+        requiredSkills:
+          type: array
+          items: { $ref: "#/components/schemas/JobSkillInput" }
+          minItems: 1
+        preferredSkills:
+          type: array
+          items: { $ref: "#/components/schemas/JobSkillInput" }
+      required:
+        [title, company, description, location, workMode, category, experienceMin, experienceMax, salaryMin, salaryMax, requiredSkills, preferredSkills]
+    Job:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        company: { type: string }
+        description: { type: string }
+        location: { type: string }
+        workMode: { $ref: "#/components/schemas/WorkMode" }
+        category: { type: string }
+        experienceMin: { type: number }
+        experienceMax: { type: number }
+        salaryMin: { type: number }
+        salaryMax: { type: number }
+        status: { type: string, enum: [active, archived] }
+        createdAt: { type: string, format: date-time }
+        requiredSkills:
+          type: array
+          items: { $ref: "#/components/schemas/Skill" }
+        preferredSkills:
+          type: array
+          items: { $ref: "#/components/schemas/Skill" }
+      required:
+        [id, title, company, description, location, workMode, category, experienceMin, experienceMax, salaryMin, salaryMax, status, createdAt, requiredSkills, preferredSkills]
+    MatchBreakdown:
+      type: object
+      properties:
+        requiredSkills: { type: number }
+        preferredSkills: { type: number }
+        experience: { type: number }
+      required: [requiredSkills, preferredSkills, experience]
+    JobMatch:
+      type: object
+      properties:
+        job: { $ref: "#/components/schemas/Job" }
+        matchScore: { type: integer, minimum: 0, maximum: 100 }
+        scoreBreakdown: { $ref: "#/components/schemas/MatchBreakdown" }
+        matchedRequiredSkills:
+          type: array
+          items: { type: string }
+        missingRequiredSkills:
+          type: array
+          items: { type: string }
+        matchedPreferredSkills:
+          type: array
+          items: { type: string }
+        experienceMatch: { type: number, minimum: 0, maximum: 1 }
+      required: [job, matchScore, scoreBreakdown, matchedRequiredSkills, missingRequiredSkills, matchedPreferredSkills, experienceMatch]
+    JobMatchListItem:
+      allOf:
+        - $ref: "#/components/schemas/JobMatch"
+        - type: object
+          properties:
+            saved: { type: boolean }
+          required: [saved]
+    JobEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/Job" }
+      required: [success, data]
+    JobDetailData:
+      type: object
+      properties:
+        job: { $ref: "#/components/schemas/Job" }
+        match:
+          anyOf:
+            - $ref: "#/components/schemas/JobMatch"
+            - type: "null"
+        saved: { type: boolean }
+      required: [job, match, saved]
+    JobDetailEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/JobDetailData" }
+      required: [success, data]
+    JobsData:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/JobMatchListItem" }
+        total: { type: integer, minimum: 0 }
+      required: [items, total]
+    JobsEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/JobsData" }
+      required: [success, data]
+    MatchesEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/JobMatchListItem" }
+      required: [success, data]
+    MatchEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/JobMatch" }
+      required: [success, data]
+    SavedJob:
+      type: object
+      properties:
+        job: { $ref: "#/components/schemas/Job" }
+        savedAt: { type: string, format: date-time }
+        matchScore: { type: integer, minimum: 0, maximum: 100 }
+      required: [job, savedAt, matchScore]
+    SavedJobsEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/SavedJob" }
+      required: [success, data]
+    CandidateDashboard:
+      type: object
+      properties:
+        profileCompletion: { type: integer, minimum: 0, maximum: 100 }
+        topMatch:
+          anyOf:
+            - $ref: "#/components/schemas/JobMatchListItem"
+            - type: "null"
+        savedJobsCount: { type: integer, minimum: 0 }
+        skillGapsCount: { type: integer, minimum: 0 }
+        topMatches:
+          type: array
+          items: { $ref: "#/components/schemas/JobMatchListItem" }
+        recommendedSkills:
+          type: array
+          items: { $ref: "#/components/schemas/SkillGap" }
+      required: [profileCompletion, topMatch, savedJobsCount, skillGapsCount, topMatches, recommendedSkills]
+    CandidateDashboardEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/CandidateDashboard" }
+      required: [success, data]
+    EmployerDashboard:
+      type: object
+      properties:
+        totalActiveJobs: { type: integer, minimum: 0 }
+        totalArchivedJobs: { type: integer, minimum: 0 }
+        recentJobs:
+          type: array
+          items: { $ref: "#/components/schemas/Job" }
+      required: [totalActiveJobs, totalArchivedJobs, recentJobs]
+    EmployerDashboardEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/EmployerDashboard" }
+      required: [success, data]
+    SkillGap:
+      type: object
+      properties:
+        skill: { $ref: "#/components/schemas/Skill" }
+        relatedJobs: { type: integer, minimum: 1 }
+        importance: { type: string, enum: [high, medium, low] }
+      required: [skill, relatedJobs, importance]
+    SkillGapsData:
+      type: object
+      properties:
+        currentSkills:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateSkill" }
+        gaps:
+          type: array
+          items: { $ref: "#/components/schemas/SkillGap" }
+      required: [currentSkills, gaps]
+    SkillGapsEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/SkillGapsData" }
+      required: [success, data]
+    MatchExplanationInput:
+      type: object
+      properties:
+        jobId: { type: string, format: uuid }
+      required: [jobId]
+    LearningPriority:
+      type: object
+      properties:
+        skill: { type: string }
+        reason: { type: string }
+        priority: { type: string, enum: [High, Medium, Low] }
+      required: [skill, reason, priority]
+    MatchExplanation:
+      type: object
+      properties:
+        summary: { type: string }
+        whyMatch:
+          type: array
+          items: { type: string }
+        strengths:
+          type: array
+          items: { type: string }
+        skillGaps:
+          type: array
+          items: { type: string }
+        recommendedActions:
+          type: array
+          items: { type: string }
+        learningPriority:
+          type: array
+          items: { $ref: "#/components/schemas/LearningPriority" }
+      required: [summary, whyMatch, strengths, skillGaps, recommendedActions, learningPriority]
+    MatchExplanationEnvelope:
+      type: object
+      properties:
+        success: { type: boolean, const: true }
+        data: { $ref: "#/components/schemas/MatchExplanation" }
+      required: [success, data]
 

@@ -1,0 +1,2384 @@
+# BUILD SKILLMATCH AI — HACKATHON PROJECT J2
+
+Build a complete, functional, premium-quality full-stack web application called:
+
+# SkillMatch AI — Skill-Based Job Matching Platform
+
+This is a hackathon submission for:
+
+Problem Statement J2: Skill-Based Job Matching Platform
+
+The application must be a REAL working full-stack application, not a static UI, mockup, fake prototype, or collection of non-functional screens.
+
+The core objective is:
+
+"Create a system that matches candidates with jobs based on skills rather than only job titles."
+
+Build the complete application from frontend to backend, database, authentication, skill matching engine, Gemini AI integration, CRUD operations, search/filtering, GitHub readiness, and deployment readiness.
+
+Prioritize working functionality over unnecessary animations or excessive features.
+
+DO NOT repeatedly regenerate working files.
+
+DO NOT create fake functionality.
+
+DO NOT create random match percentages.
+
+DO NOT create fake AI responses.
+
+DO NOT claim an API integration works if it actually failed.
+
+---
+
+# 1. APPLICATION NAME
+
+Application name:
+
+SkillMatch AI
+
+Tagline:
+
+"Find the right job based on your skills — not just your job title."
+
+Short description:
+
+"SkillMatch AI connects candidates with relevant job opportunities by analyzing their real skills, proficiency, experience, and job requirements."
+
+Use this name consistently in:
+
+- Browser title
+- Landing page
+- Navbar
+- Dashboard
+- README
+- Documentation
+- Metadata
+- Deployment
+
+---
+
+# 2. PROBLEM STATEMENT
+
+Build a platform that matches candidates with jobs based primarily on skills rather than only job titles.
+
+A candidate may have the right skills for a job even when:
+
+- Their previous job title is different
+- Their degree title is different
+- Their previous experience was in another role
+- They do not exactly match the job title
+- They have transferable technical skills
+
+The platform must compare:
+
+Candidate:
+
+- Skills
+- Skill proficiency
+- Years of experience
+- Location
+- Work preference
+- Career interests
+
+against:
+
+Job:
+
+- Required skills
+- Preferred skills
+- Experience requirements
+- Job category
+- Location
+- Work mode
+
+The system must calculate a transparent deterministic skill-match score.
+
+Google Gemini should be used for:
+
+- Match explanation
+- Skill-gap explanation
+- Personalized improvement suggestions
+- Learning recommendations
+
+IMPORTANT:
+
+Gemini must NOT randomly generate the primary match score.
+
+The core match score must be calculated by the backend matching algorithm using actual database data.
+
+---
+
+# 3. TECHNOLOGY STACK
+
+Use:
+
+## Frontend
+
+- React
+- TypeScript
+- Vite
+- React Router
+- Tailwind CSS
+- shadcn/ui
+- Lucide React
+- Axios
+- Recharts where useful
+
+## Backend
+
+- Node.js
+- Express.js
+- TypeScript
+- JWT authentication
+- bcrypt password hashing
+- Zod validation
+- Helmet
+- CORS
+- express-rate-limit
+
+## Database
+
+- Supabase PostgreSQL
+- @supabase/supabase-js
+
+## AI
+
+- Google Gemini API
+- Official @google/genai SDK
+- Backend-only Gemini integration
+- Structured JSON output
+- Zod validation
+
+## Version Control
+
+- Git
+- GitHub
+
+## Deployment
+
+Frontend:
+- Vercel
+
+Backend:
+- Render
+
+Database:
+- Supabase
+
+AI:
+- Google Gemini API
+
+---
+
+# 4. PROJECT ARCHITECTURE
+
+Create a clean full-stack structure.
+
+Use:
+
+/
+  client/
+  server/
+  docs/
+  README.md
+  .gitignore
+
+Frontend:
+
+client/
+  src/
+    components/
+    pages/
+    layouts/
+    hooks/
+    services/
+    context/
+    utils/
+    types/
+
+Backend:
+
+server/
+  src/
+    config/
+    controllers/
+    middleware/
+    routes/
+    services/
+    validators/
+    utils/
+    types/
+    lib/
+
+Database:
+
+server/
+  database/
+    migrations/
+    seed.sql
+
+Documentation:
+
+docs/
+  ARCHITECTURE.md
+  API.md
+  AI_INTEGRATION.md
+  TESTING.md
+
+Do not create one huge file containing the entire application.
+
+Use modular architecture.
+
+---
+
+# 5. SUPABASE PROJECT CONFIGURATION
+
+Use my existing Supabase project.
+
+Supabase Project URL:
+
+https://mcrkavvinthyinosdepa.supabase.co
+
+Supabase Publishable Key:
+
+sb_publishable_0hN09HSSUUCaTbAgAdUI1Q_9AdCY8Ej
+
+Use these exact frontend environment variable names:
+
+NEXT_PUBLIC_SUPABASE_URL=https://mcrkavvinthyinosdepa.supabase.co
+
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_0hN09HSSUUCaTbAgAdUI1Q_9AdCY8Ej
+
+IMPORTANT:
+
+Do NOT create another Supabase project.
+
+Do NOT replace these values.
+
+Do NOT ask me for the Supabase URL again.
+
+Do NOT ask me for the Supabase publishable key again.
+
+These values are already provided.
+
+---
+
+# 6. NEXT_PUBLIC VARIABLES WITH VITE
+
+The frontend uses React + TypeScript + Vite.
+
+Because the Supabase variables intentionally use the names:
+
+NEXT_PUBLIC_SUPABASE_URL
+
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+
+configure Vite so these NEXT_PUBLIC_ variables can safely be exposed to the frontend.
+
+Do NOT rename them to VITE_SUPABASE_URL.
+
+Do NOT create duplicate Supabase environment variables unless technically necessary.
+
+If using Vite, configure its environment handling appropriately so NEXT_PUBLIC_* variables are available to the browser.
+
+Only expose the Supabase URL and publishable key.
+
+These are frontend-safe Supabase values.
+
+Do NOT expose any server secret.
+
+---
+
+# 7. SERVER ENVIRONMENT VARIABLES
+
+The backend must use server-side environment variables for secrets.
+
+Use:
+
+SUPABASE_URL=https://mcrkavvinthyinosdepa.supabase.co
+
+SUPABASE_SECRET_KEY=
+
+GEMINI_API_KEY=
+
+JWT_SECRET=
+
+CLIENT_URL=
+
+PORT=
+
+The following must NEVER be exposed to browser JavaScript:
+
+SUPABASE_SECRET_KEY
+GEMINI_API_KEY
+JWT_SECRET
+
+Never use a VITE_ prefix for these secrets.
+
+Never use a NEXT_PUBLIC_ prefix for these secrets.
+
+Never hard-code them.
+
+Never commit them to GitHub.
+
+---
+
+# 8. GEMINI API KEY — IMPORTANT
+
+I have NOT provided my Gemini API key yet.
+
+Do NOT invent one.
+
+Do NOT generate one.
+
+Do NOT put a fake key in the source code.
+
+Do NOT assume a Gemini key exists.
+
+Build the application up to the Gemini integration stage.
+
+When you reach the Gemini API configuration stage, STOP and ask me:
+
+"Please provide your Gemini API key. I will add it securely as a Replit Secret."
+
+Wait for me to provide the key.
+
+After I provide it:
+
+1. Add it securely to Replit Secrets.
+2. Store it as:
+
+GEMINI_API_KEY
+
+3. Use it only from backend/server-side code.
+4. Never expose it to frontend JavaScript.
+5. Never display it in the UI.
+6. Never print it in logs.
+7. Never commit it to GitHub.
+8. Continue implementing and testing the Gemini integration.
+
+Do NOT ask me for the Gemini key at the beginning.
+
+Ask me only when the actual Gemini integration is ready.
+
+---
+
+# 9. ENVIRONMENT FILES
+
+Create:
+
+.env.example
+
+and appropriate client/server environment examples.
+
+Use placeholders only.
+
+Never put the actual Gemini API key in .env.example.
+
+Never commit real secrets.
+
+Add appropriate secret files to .gitignore:
+
+.env
+.env.local
+.env.production
+.env.*.local
+
+Also ensure server environment files are ignored.
+
+---
+
+# 10. DESIGN AND UI
+
+Create a premium modern SaaS interface.
+
+Design style:
+
+- Dark navy background
+- Violet/indigo accents
+- Emerald/teal success accents
+- White/light text
+- Subtle gradients
+- Modern cards
+- Rounded corners
+- Professional typography
+- Clean spacing
+- Responsive dashboard
+- Sidebar
+- Top navigation
+- Smooth but restrained animations
+- Loading skeletons
+- Empty states
+- Error states
+
+The application should look like a serious modern career-tech platform.
+
+Do NOT make it look like a generic AI chatbot.
+
+The main experience must be job matching.
+
+Use Lucide icons.
+
+Use shadcn/ui components where appropriate.
+
+Support:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+---
+
+# 11. APPLICATION PAGES
+
+Create the following pages.
+
+## Public
+
+1. Landing Page
+2. Login
+3. Register
+
+## Candidate
+
+4. Candidate Dashboard
+5. Candidate Profile
+6. Skills Management
+7. Find Jobs
+8. Job Details
+9. Saved Jobs
+10. My Matches
+11. Skill Gap Analysis
+
+## Employer/Admin
+
+12. Employer Dashboard
+13. Manage Jobs
+14. Create Job
+15. Edit Job
+
+## System
+
+16. 404 Page
+17. Error Page
+
+---
+
+# 12. LANDING PAGE
+
+Create a premium landing page.
+
+Hero:
+
+"Find Jobs That Match Your Skills."
+
+Subtitle:
+
+"SkillMatch AI connects your real skills with the right opportunities — beyond simple job-title searches."
+
+Primary button:
+
+"Get Started"
+
+Secondary button:
+
+"Explore Jobs"
+
+Sections:
+
+## How It Works
+
+1. Build your skill profile
+2. Analyze job requirements
+3. Get a transparent match score
+4. Discover skill gaps
+5. Improve your job readiness
+
+## Features
+
+- Skill-based matching
+- Transparent match scores
+- AI match explanations
+- Skill-gap analysis
+- Job search
+- Advanced filtering
+- Saved jobs
+- Personalized recommendations
+
+## Why SkillMatch AI?
+
+Explain that candidates can discover jobs based on actual and transferable skills instead of relying only on exact job-title matches.
+
+---
+
+# 13. USER ROLES
+
+Support:
+
+candidate
+employer
+admin
+
+## Candidate
+
+Can:
+
+- Register
+- Login
+- Logout
+- Manage profile
+- Add skills
+- Remove skills
+- Set proficiency
+- Set years of experience
+- Search jobs
+- Filter jobs
+- View job details
+- View match score
+- View matched skills
+- View missing skills
+- Get AI match explanations
+- View skill gaps
+- Save jobs
+- Remove saved jobs
+- View recommended jobs
+
+## Employer
+
+Can:
+
+- Login
+- Create jobs
+- Read jobs
+- Update jobs
+- Archive jobs
+- Delete jobs
+- Add required skills
+- Add preferred skills
+- Set experience requirements
+- Manage job listings
+
+## Admin
+
+Can:
+
+- Manage jobs
+- Manage skills
+- View platform information
+- Perform administrative operations
+
+Protect role-specific endpoints.
+
+---
+
+# 14. AUTHENTICATION
+
+Implement authentication using the Express backend.
+
+Do NOT use Supabase Auth as the primary authentication system.
+
+Use:
+
+- bcrypt
+- JWT
+- Express middleware
+- Zod validation
+
+Required:
+
+- Registration
+- Login
+- Logout
+- Current user
+- Protected routes
+- Role-based authorization
+
+Registration:
+
+- Full name
+- Email
+- Password
+- Role
+
+Login:
+
+- Email
+- Password
+
+Never store plaintext passwords.
+
+Never return password_hash in API responses.
+
+Validate passwords securely.
+
+Use appropriate HTTP status codes.
+
+Handle:
+
+400
+401
+403
+409
+422
+500
+
+Do not expose stack traces or sensitive internal errors.
+
+---
+
+# 15. DATABASE SCHEMA
+
+Use Supabase PostgreSQL.
+
+Create migrations.
+
+Do NOT assume tables already exist.
+
+Create:
+
+## users
+
+- id UUID primary key
+- name
+- email unique
+- password_hash
+- role
+- created_at
+- updated_at
+
+## candidate_profiles
+
+- id UUID primary key
+- user_id UUID foreign key
+- headline
+- bio
+- experience_years
+- preferred_location
+- preferred_work_mode
+- preferred_categories
+- created_at
+- updated_at
+
+## skills
+
+- id UUID primary key
+- name unique
+- category
+- created_at
+
+## candidate_skills
+
+- id UUID primary key
+- candidate_id UUID foreign key
+- skill_id UUID foreign key
+- proficiency
+- years_experience
+- created_at
+
+Prevent duplicate candidate/skill combinations.
+
+## jobs
+
+- id UUID primary key
+- title
+- company
+- description
+- location
+- work_mode
+- category
+- experience_min
+- experience_max
+- salary_min
+- salary_max
+- created_by UUID foreign key
+- status
+- created_at
+- updated_at
+
+## job_skills
+
+- id UUID primary key
+- job_id UUID foreign key
+- skill_id UUID foreign key
+- skill_type
+- importance
+- created_at
+
+skill_type:
+
+required
+preferred
+
+## saved_jobs
+
+- id UUID primary key
+- user_id UUID foreign key
+- job_id UUID foreign key
+- created_at
+
+Prevent duplicate saved jobs.
+
+## match_results
+
+- id UUID primary key
+- user_id UUID foreign key
+- job_id UUID foreign key
+- match_score
+- matched_skills JSONB
+- missing_skills JSONB
+- preferred_matches JSONB
+- experience_match JSONB
+- explanation JSONB
+- created_at
+- updated_at
+
+---
+
+# 16. DATABASE SECURITY
+
+Enable Row Level Security where appropriate for user-specific tables.
+
+Do NOT disable security to fix an error.
+
+Candidates must only access their own:
+
+- profile
+- skills
+- saved jobs
+- match results
+
+Employers/admins must only perform operations allowed by their role.
+
+Do not trust user IDs from the frontend.
+
+Always derive the authenticated user from the verified JWT.
+
+Use foreign keys.
+
+Use unique constraints.
+
+Use indexes.
+
+Use timestamps.
+
+Create complete SQL migrations.
+
+---
+
+# 17. DATABASE SEED DATA
+
+Create realistic development/demo data.
+
+Create skills:
+
+Python
+Java
+JavaScript
+TypeScript
+React
+Node.js
+Express.js
+SQL
+PostgreSQL
+MongoDB
+Git
+GitHub
+Docker
+AWS
+Machine Learning
+Data Analysis
+FastAPI
+Spring Boot
+Figma
+UI/UX
+REST APIs
+Redis
+Kubernetes
+TensorFlow
+PyTorch
+
+Create at least 10 realistic jobs:
+
+1. Backend Developer
+2. Full Stack Developer
+3. Python Developer
+4. Data Analyst
+5. AI/ML Intern
+6. Frontend Developer
+7. Software Engineer
+8. DevOps Engineer
+9. Node.js Backend Intern
+10. Junior Data Engineer
+
+Each job must contain:
+
+- Description
+- Required skills
+- Preferred skills
+- Experience
+- Salary
+- Category
+- Location
+- Work mode
+
+Make the data realistic.
+
+Ensure some jobs produce high, medium, and low match scores.
+
+---
+
+# 18. CANDIDATE PROFILE
+
+Create profile management.
+
+Fields:
+
+- Name
+- Headline
+- Bio
+- Experience
+- Location
+- Work mode
+- Preferred categories
+- Skills
+- Proficiency
+- Years of experience
+
+Proficiency:
+
+Beginner
+Intermediate
+Advanced
+Expert
+
+Allow:
+
+- Add skill
+- Remove skill
+- Edit proficiency
+- Edit experience
+
+Calculate profile completion from actual database data.
+
+Do NOT hard-code profile completion percentages.
+
+---
+
+# 19. SKILLS MANAGEMENT
+
+Create a searchable skill selector.
+
+Allow candidates to:
+
+- Search skills
+- Add skills
+- Remove skills
+- Set proficiency
+- Set years of experience
+
+Prevent duplicate skills.
+
+Use the database skills table.
+
+---
+
+# 20. JOB CRUD
+
+Employers/admins can:
+
+Create
+Read
+Update
+Archive
+Delete
+
+Job fields:
+
+- Job title
+- Company
+- Description
+- Location
+- Work mode
+- Category
+- Minimum experience
+- Maximum experience
+- Minimum salary
+- Maximum salary
+- Required skills
+- Preferred skills
+
+Validate every field.
+
+Only authorized users can manage jobs.
+
+Candidates can view active jobs.
+
+---
+
+# 21. JOB SEARCH
+
+Create a professional Find Jobs page.
+
+Search:
+
+- Job title
+- Company
+- Skill
+
+Filters:
+
+- Category
+- Location
+- Work mode
+- Experience
+- Salary
+- Match percentage
+
+Sort:
+
+- Highest match
+- Newest
+- Salary high to low
+- Salary low to high
+
+Use actual database data.
+
+Do not fake filtering in the UI.
+
+---
+
+# 22. JOB CARD
+
+Each job card should display:
+
+- Job title
+- Company
+- Location
+- Work mode
+- Experience
+- Salary
+- Category
+- Match percentage
+- Top matched skills
+- Missing skills
+- Save button
+- View Job button
+
+Example:
+
+Backend Developer
+
+Company:
+TechNova
+
+Match:
+86%
+
+Matched:
+Python
+SQL
+Node.js
+
+Missing:
+Docker
+
+---
+
+# 23. JOB DETAILS
+
+Show:
+
+- Job title
+- Company
+- Description
+- Location
+- Work mode
+- Experience
+- Salary
+- Required skills
+- Preferred skills
+
+Display:
+
+"Your Match: 86%"
+
+The percentage MUST come from the backend matching algorithm.
+
+Do NOT hard-code it.
+
+Show:
+
+## Matched Skills
+
+Skills the candidate has that the job requires.
+
+## Missing Skills
+
+Required skills the candidate does not have.
+
+## Preferred Matches
+
+Preferred skills the candidate already has.
+
+## Experience Match
+
+Explain whether experience matches.
+
+Button:
+
+"Get AI Match Explanation"
+
+---
+
+# 24. CORE SKILL MATCHING ENGINE
+
+This is the most important functionality.
+
+Create a deterministic backend matching service.
+
+DO NOT use Gemini to calculate the primary score.
+
+Use:
+
+Required skills = 70%
+
+Preferred skills = 20%
+
+Experience = 10%
+
+Formula:
+
+requiredScore =
+matchedRequiredSkills / totalRequiredSkills
+
+preferredScore =
+matchedPreferredSkills / totalPreferredSkills
+
+experienceScore =
+calculated from candidate experience and job experience range
+
+Final:
+
+matchScore =
+(requiredScore * 70)
++
+(preferredScore * 20)
++
+(experienceScore * 10)
+
+Round to an integer from 0 to 100.
+
+Handle:
+
+- No preferred skills
+- No experience requirement
+- No required skills
+- Candidate with zero experience
+
+Return:
+
+{
+  "matchScore": 86,
+  "scoreBreakdown": {
+    "requiredSkills": 70,
+    "preferredSkills": 10,
+    "experience": 6
+  },
+  "matchedRequiredSkills": [
+    "Python",
+    "SQL",
+    "Node.js"
+  ],
+  "missingRequiredSkills": [
+    "Docker"
+  ],
+  "matchedPreferredSkills": [
+    "Git"
+  ]
+}
+
+The calculation must be deterministic and reproducible.
+
+---
+
+# 25. MATCH RESULTS
+
+Create:
+
+GET /api/matches
+
+Return recommended jobs for the authenticated candidate.
+
+Sort by:
+
+1. Match score descending
+2. Job recency
+
+Create:
+
+GET /api/matches/:jobId
+
+Return the candidate's match result for a job.
+
+Store useful match results.
+
+Recalculate when candidate skills or job requirements change.
+
+Do not use stale data incorrectly.
+
+---
+
+# 26. GEMINI AI INTEGRATION
+
+Use Google Gemini through the secure Express backend ONLY.
+
+The frontend must NEVER call Gemini directly.
+
+Frontend:
+
+React
+
+↓
+
+Express API
+
+↓
+
+Gemini
+
+The Gemini API key must only exist on the backend.
+
+Use:
+
+GEMINI_API_KEY
+
+from server-side environment variables.
+
+Use the official @google/genai SDK.
+
+Use a currently supported Gemini model.
+
+Do not hard-code the model in a way that makes the application impossible to update.
+
+---
+
+# 27. GEMINI MATCH EXPLANATION
+
+Create:
+
+POST /api/ai/match-explanation
+
+Input:
+
+- Candidate profile
+- Candidate skills
+- Candidate experience
+- Job details
+- Deterministic match score
+- Matched skills
+- Missing skills
+- Preferred matches
+
+Important:
+
+The deterministic match score has already been calculated.
+
+Gemini MUST NOT modify the score.
+
+Gemini must only explain the result.
+
+Expected JSON:
+
+{
+  "summary": "string",
+  "whyMatch": [
+    "string"
+  ],
+  "strengths": [
+    "string"
+  ],
+  "skillGaps": [
+    "string"
+  ],
+  "recommendedActions": [
+    "string"
+  ],
+  "learningPriority": [
+    {
+      "skill": "string",
+      "reason": "string",
+      "priority": "High"
+    }
+  ]
+}
+
+Validate this response using Zod.
+
+Do not blindly trust arbitrary AI output.
+
+---
+
+# 28. GEMINI SYSTEM INSTRUCTIONS
+
+Tell Gemini:
+
+- Never change the supplied match score.
+- Never invent candidate skills.
+- Never invent job requirements.
+- Explain the existing deterministic score.
+- Identify relevant skill gaps.
+- Provide realistic improvement recommendations.
+- Keep recommendations related to the supplied job.
+- Do not guarantee employment.
+- Do not claim a user will definitely get a job.
+- Do not fabricate experience.
+- Return only the required JSON structure.
+- If information is missing, say so instead of inventing information.
+
+---
+
+# 29. GEMINI FAILURE HANDLING
+
+Handle:
+
+- Missing API key
+- Invalid API key
+- Rate limits
+- Timeout
+- Network failure
+- Invalid Gemini response
+- Unsupported model
+- API failure
+
+If Gemini fails:
+
+DO NOT say the AI generation succeeded.
+
+Show:
+
+"AI explanation is temporarily unavailable. Your calculated skill match is still available."
+
+Provide:
+
+"Retry"
+
+The deterministic matching system must continue working without Gemini.
+
+If the Gemini key is missing, show a configuration error only where appropriate.
+
+Never expose the key.
+
+---
+
+# 30. SKILL GAP ANALYSIS
+
+Create a Skill Gap Analysis page.
+
+Show:
+
+## Current Skills
+
+Candidate's actual skills.
+
+## Required Skills
+
+Skills required by selected/recommended jobs.
+
+## Missing Skills
+
+Required skills the candidate does not have.
+
+## Priority
+
+High
+Medium
+Low
+
+Missing skills must be determined from actual job requirements.
+
+Gemini can explain why the skill matters and recommend learning actions.
+
+Gemini must not invent unrelated skills.
+
+---
+
+# 31. SAVED JOBS
+
+Implement:
+
+POST /api/jobs/:id/save
+
+DELETE /api/jobs/:id/save
+
+GET /api/saved-jobs
+
+Candidates can:
+
+- Save jobs
+- Unsave jobs
+- View saved jobs
+
+Prevent duplicates.
+
+Persist everything in Supabase.
+
+---
+
+# 32. CANDIDATE DASHBOARD
+
+Create a premium dashboard.
+
+Show:
+
+- Profile Strength
+- Top Match
+- Saved Jobs
+- Skill Gaps
+
+Sections:
+
+Top Job Matches
+Recent Saved Jobs
+Recommended Skills
+Profile Completion
+
+Use real database data.
+
+Do NOT hard-code dashboard values.
+
+---
+
+# 33. EMPLOYER DASHBOARD
+
+Show:
+
+- Total active jobs
+- Total archived jobs
+- Jobs created
+- Recent job listings
+
+Actions:
+
+Create Job
+Manage Jobs
+
+Job table:
+
+Title
+Company
+Category
+Status
+Created
+Actions
+
+Actions:
+
+Edit
+Archive
+Delete
+
+---
+
+# 34. API ROUTES
+
+Implement:
+
+## Authentication
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+POST /api/auth/logout
+
+GET /api/auth/me
+
+## Profile
+
+GET /api/profile
+
+PUT /api/profile
+
+GET /api/profile/skills
+
+POST /api/profile/skills
+
+PUT /api/profile/skills/:skillId
+
+DELETE /api/profile/skills/:skillId
+
+## Jobs
+
+GET /api/jobs
+
+GET /api/jobs/:id
+
+POST /api/jobs
+
+PUT /api/jobs/:id
+
+DELETE /api/jobs/:id
+
+PATCH /api/jobs/:id/archive
+
+## Saved Jobs
+
+GET /api/saved-jobs
+
+POST /api/jobs/:id/save
+
+DELETE /api/jobs/:id/save
+
+## Matches
+
+GET /api/matches
+
+GET /api/matches/:jobId
+
+## AI
+
+POST /api/ai/match-explanation
+
+## Health
+
+GET /api/health
+
+Use proper HTTP status codes.
+
+---
+
+# 35. API RESPONSE FORMAT
+
+Use:
+
+Success:
+
+{
+  "success": true,
+  "data": {}
+}
+
+Error:
+
+{
+  "success": false,
+  "error": {
+    "message": "Human-readable message",
+    "code": "ERROR_CODE"
+  }
+}
+
+Never expose:
+
+- Stack traces
+- API keys
+- JWT secrets
+- Database credentials
+- Password hashes
+
+---
+
+# 36. SECURITY
+
+Implement:
+
+- bcrypt
+- JWT
+- Authentication middleware
+- Role-based authorization
+- Zod validation
+- Helmet
+- CORS
+- Rate limiting
+- Centralized error handling
+- Secure environment variables
+- Database ownership checks
+- RLS where appropriate
+
+Protect:
+
+- Login
+- Registration
+- AI endpoint
+
+with reasonable rate limiting.
+
+Validate:
+
+- Request body
+- Query parameters
+- Route parameters
+
+Never trust frontend user IDs.
+
+Use authenticated JWT identity.
+
+---
+
+# 37. FRONTEND AUTHENTICATION
+
+Implement:
+
+- Auth context
+- Current user
+- Login state
+- Logout
+- Protected routes
+- Role-based routes
+- Loading state
+- Error state
+
+Do not store secrets in frontend state.
+
+The frontend communicates with the Express backend for authentication and protected operations.
+
+---
+
+# 38. LOADING / ERROR / EMPTY STATES
+
+Every major API operation must have:
+
+Loading
+Success
+Error
+Empty
+
+Examples:
+
+"Loading jobs..."
+
+"No matching jobs found."
+
+"Unable to load your profile."
+
+"AI explanation is temporarily unavailable."
+
+"Your saved jobs will appear here."
+
+Never leave blank screens.
+
+---
+
+# 39. RESPONSIVE DESIGN
+
+Test:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+Check:
+
+- Navigation
+- Sidebar
+- Cards
+- Forms
+- Tables
+- Job listings
+- Modals
+- Buttons
+- Skill selector
+
+Prevent horizontal overflow.
+
+---
+
+# 40. ACCESSIBILITY
+
+Use:
+
+- Semantic HTML
+- Form labels
+- Keyboard navigation
+- Accessible buttons
+- Proper focus states
+- ARIA labels where needed
+- Good color contrast
+
+---
+
+# 41. DEMO FLOW
+
+Optimize for a hackathon presentation.
+
+Ideal demo:
+
+1. Open landing page
+2. Register/login
+3. Open candidate dashboard
+4. Complete profile
+5. Add skills
+6. Open Find Jobs
+7. Search/filter jobs
+8. Open a job
+9. Show deterministic match percentage
+10. Show matched skills
+11. Show missing skills
+12. Click "Get AI Match Explanation"
+13. Display Gemini explanation
+14. Open Skill Gap Analysis
+15. Save the job
+16. Open Saved Jobs
+
+This must work smoothly.
+
+---
+
+# 42. GITHUB PREPARATION
+
+Prepare a GitHub-ready repository.
+
+Include:
+
+- Source code
+- package.json
+- lockfile
+- README.md
+- .gitignore
+- .env.example
+- Database migrations
+- Seed data
+- Documentation
+
+README must contain:
+
+- Project name
+- Problem statement
+- Solution
+- Features
+- Technology stack
+- Architecture
+- Database schema
+- Matching algorithm
+- Gemini integration
+- Security
+- Environment variables
+- Local setup
+- Supabase setup
+- Gemini setup
+- GitHub instructions
+- Render deployment
+- Vercel deployment
+- Demo flow
+- Future improvements
+
+NEVER put real API keys in README.
+
+---
+
+# 43. DATABASE MIGRATIONS
+
+Create:
+
+server/database/migrations/
+
+001_create_users.sql
+002_create_candidate_profiles.sql
+003_create_skills.sql
+004_create_candidate_skills.sql
+005_create_jobs.sql
+006_create_job_skills.sql
+007_create_saved_jobs.sql
+008_create_match_results.sql
+009_create_indexes.sql
+010_create_rls_policies.sql
+
+Provide complete SQL.
+
+Do not ask me to write SQL manually.
+
+Do not disable RLS.
+
+---
+
+# 44. SEED SCRIPT
+
+Create:
+
+server/database/seed.sql
+
+Include:
+
+- Skills
+- Jobs
+- Job skills
+
+Use realistic data.
+
+Do not create insecure production passwords.
+
+---
+
+# 45. ARCHITECTURE DOCUMENTATION
+
+Create:
+
+docs/ARCHITECTURE.md
+
+Explain:
+
+React Frontend
+↓
+Express REST API
+↓
+Authentication / Matching / AI Services
+↓
+Supabase PostgreSQL
+
+Explain:
+
+- Authentication
+- Candidate profile
+- Skills
+- Jobs
+- Matching
+- Gemini
+- Database
+- Security
+- Deployment
+
+---
+
+# 46. AI DOCUMENTATION
+
+Create:
+
+docs/AI_INTEGRATION.md
+
+Explain:
+
+1. Gemini is called only by backend.
+2. Gemini key is stored in Replit Secrets.
+3. Match score is deterministic.
+4. Gemini explains the match.
+5. Gemini helps explain skill gaps.
+6. Zod validates the AI response.
+7. AI failures are handled gracefully.
+8. AI recommendations are not employment guarantees.
+
+---
+
+# 47. API DOCUMENTATION
+
+Create:
+
+docs/API.md
+
+For every endpoint document:
+
+- Method
+- URL
+- Authentication
+- Request
+- Response
+- Errors
+
+---
+
+# 48. TESTING DOCUMENTATION
+
+Create:
+
+docs/TESTING.md
+
+Test:
+
+## Authentication
+
+- Register
+- Login
+- Logout
+- Invalid password
+- Duplicate email
+- Protected route
+
+## Profile
+
+- Create profile
+- Update profile
+- Add skill
+- Remove skill
+
+## Jobs
+
+- List
+- Search
+- Filter
+- View
+- Create
+- Update
+- Archive
+- Delete
+
+## Matching
+
+- Score calculation
+- Matched skills
+- Missing skills
+- Preferred skills
+- Experience
+- Score breakdown
+
+## AI
+
+- Gemini success
+- Missing key
+- Invalid key
+- Rate limit
+- Invalid response
+- Retry
+
+## Saved Jobs
+
+- Save
+- Unsave
+- View
+
+## Deployment
+
+- Frontend
+- Backend
+- Database
+- CORS
+- Gemini
+- Authentication
+
+---
+
+# 49. VERCEL DEPLOYMENT
+
+Prepare the frontend for Vercel.
+
+Frontend directory:
+
+client
+
+Build:
+
+npm run build
+
+Output:
+
+dist
+
+Ensure React Router works on direct refresh.
+
+Use:
+
+VITE_API_URL=
+
+for the backend API URL if using Vite's standard frontend API configuration.
+
+Do not hard-code localhost for production.
+
+Never place:
+
+GEMINI_API_KEY
+JWT_SECRET
+SUPABASE_SECRET_KEY
+
+in frontend environment variables.
+
+---
+
+# 50. RENDER DEPLOYMENT
+
+Prepare the backend for Render.
+
+Backend directory:
+
+server
+
+The server must listen on:
+
+process.env.PORT || 10000
+
+Bind to:
+
+0.0.0.0
+
+Do not hard-code localhost for production.
+
+Required Render environment variables:
+
+SUPABASE_URL
+SUPABASE_SECRET_KEY
+GEMINI_API_KEY
+JWT_SECRET
+CLIENT_URL
+
+---
+
+# 51. REPLIT SECRETS
+
+The following sensitive variables must be configured through Replit Secrets:
+
+GEMINI_API_KEY
+SUPABASE_SECRET_KEY
+JWT_SECRET
+CLIENT_URL
+
+The Gemini key must specifically be stored as:
+
+GEMINI_API_KEY
+
+Do not write the actual key into source code.
+
+---
+
+# 52. LOCAL DEVELOPMENT
+
+Provide exact working commands based on the actual package.json files.
+
+Frontend:
+
+cd client
+npm install
+npm run dev
+
+Backend:
+
+cd server
+npm install
+npm run dev
+
+If the project uses a root workspace, configure the appropriate root scripts.
+
+Do NOT invent commands that are not supported by package.json.
+
+---
+
+# 53. PRODUCTION BUILD
+
+Before declaring completion:
+
+1. Install dependencies.
+2. Check TypeScript.
+3. Run linting if configured.
+4. Build frontend.
+5. Build backend.
+6. Fix compilation errors.
+7. Fix broken imports.
+8. Fix runtime errors.
+9. Test authentication.
+10. Test database.
+11. Test matching.
+12. Test Gemini.
+13. Test responsive design.
+
+Do not knowingly leave core errors.
+
+---
+
+# 54. SECURITY FINAL CHECK
+
+Search the project for:
+
+GEMINI_API_KEY
+SUPABASE_SECRET_KEY
+JWT_SECRET
+passwords
+tokens
+credentials
+
+Make sure no secret is hard-coded.
+
+Make sure secrets are not exposed through frontend bundles.
+
+Make sure secrets are not committed to GitHub.
+
+Make sure secrets are not displayed in logs.
+
+Make sure secrets are not returned by APIs.
+
+---
+
+# 55. PRIORITY ORDER
+
+If development time or Replit credits are limited, follow this exact priority:
+
+Priority 1:
+Authentication
+
+Priority 2:
+Supabase database
+
+Priority 3:
+Candidate profile
+
+Priority 4:
+Skills
+
+Priority 5:
+Job CRUD
+
+Priority 6:
+Deterministic skill matching
+
+Priority 7:
+Job search/filtering
+
+Priority 8:
+Gemini explanation
+
+Priority 9:
+Saved jobs
+
+Priority 10:
+Skill-gap analysis
+
+Priority 11:
+Dashboard polish
+
+Priority 12:
+Animations
+
+Do NOT sacrifice core functionality for visual effects.
+
+---
+
+# 56. DO NOT OVERENGINEER
+
+Do NOT add unnecessary:
+
+- Payment systems
+- Social networking
+- Chat systems
+- Messaging
+- Complex microservices
+- Unnecessary external APIs
+- Complicated recommendation systems
+- Unnecessary DevOps infrastructure
+
+Build a clean, strong, working hackathon MVP.
+
+---
+
+# 57. ERROR FIXING RULE
+
+If an error occurs:
+
+1. Identify the root cause.
+2. Fix the smallest necessary part.
+3. Preserve working code.
+4. Do not rewrite the entire application.
+5. Do not remove working features.
+6. Re-test the affected functionality.
+7. Check for regressions.
+
+Do not repeatedly regenerate the whole project.
+
+---
+
+# 58. REPLIT CREDIT-SAVING RULE
+
+I have limited Replit credits.
+
+Therefore:
+
+- Do not repeatedly regenerate files.
+- Do not recreate working components.
+- Do not rewrite working architecture.
+- Do not add unnecessary dependencies.
+- Do not create unnecessary features.
+- Reuse existing components.
+- Inspect existing code before modifying it.
+- Make focused changes.
+- Build core functionality first.
+- Avoid unnecessary animations.
+- Avoid unnecessary AI calls.
+
+Do not waste credits on features that are not required by the problem statement.
+
+---
+
+# 59. IMPORTANT EXECUTION ORDER
+
+Follow this order:
+
+STEP 1:
+Inspect the existing Replit environment.
+
+STEP 2:
+Create the full-stack project structure.
+
+STEP 3:
+Build the React frontend.
+
+STEP 4:
+Build the Express backend.
+
+STEP 5:
+Connect the existing Supabase project.
+
+STEP 6:
+Create database migrations.
+
+STEP 7:
+Create seed data.
+
+STEP 8:
+Implement authentication.
+
+STEP 9:
+Implement candidate profile.
+
+STEP 10:
+Implement skills.
+
+STEP 11:
+Implement job CRUD.
+
+STEP 12:
+Implement deterministic matching.
+
+STEP 13:
+Implement job search and filtering.
+
+STEP 14:
+Implement saved jobs.
+
+STEP 15:
+Implement skill-gap analysis.
+
+STEP 16:
+Prepare Gemini integration.
+
+STEP 17:
+
+STOP.
+
+Ask me:
+
+"Please provide your Gemini API key. I will add it securely as a Replit Secret."
+
+WAIT FOR MY RESPONSE.
+
+Do NOT continue pretending Gemini works without the key.
+
+STEP 18:
+
+After I provide the Gemini key:
+
+Add it to Replit Secrets as:
+
+GEMINI_API_KEY
+
+Then implement:
+
+- Gemini backend service
+- Match explanation
+- Structured JSON
+- Zod validation
+- Error handling
+- Retry
+
+STEP 19:
+Test complete application.
+
+STEP 20:
+Prepare GitHub.
+
+STEP 21:
+Prepare Render.
+
+STEP 22:
+Prepare Vercel.
+
+STEP 23:
+Give me final setup instructions.
+
+---
+
+# 60. FINAL TESTING
+
+Before declaring the project complete, verify:
+
+Authentication works.
+
+Registration works.
+
+Login works.
+
+Logout works.
+
+JWT protection works.
+
+Role protection works.
+
+Supabase connection works.
+
+Candidate profile persists.
+
+Skills persist.
+
+Jobs persist.
+
+Job CRUD works.
+
+Search works.
+
+Filters work.
+
+Saved jobs work.
+
+Match scores are calculated.
+
+Match scores are deterministic.
+
+Matched skills are correct.
+
+Missing skills are correct.
+
+Experience affects the score.
+
+Gemini explanation works.
+
+Gemini failures are handled.
+
+API validation works.
+
+Errors are handled.
+
+Frontend is responsive.
+
+Backend health check works.
+
+Production build works.
+
+No secrets are exposed.
+
+---
+
+# 61. FINAL OUTPUT
+
+When the project is complete, provide:
+
+1. Project structure
+2. Implemented features
+3. Files created
+4. Database tables
+5. Database migrations
+6. API endpoints
+7. Environment variables
+8. Supabase setup
+9. Gemini setup
+10. Replit Secrets setup
+11. Local run commands
+12. GitHub push instructions
+13. Render deployment instructions
+14. Vercel deployment instructions
+15. Testing results
+16. Remaining errors
+17. Remaining manual setup
+18. Final hackathon demo flow
+
+Do not simply say:
+
+"Project completed."
+
+Report the actual implementation status.
+
+If something is incomplete, clearly state what remains.
+
+---
+
+# 62. FINAL CREDENTIAL RULE
+
+The Supabase configuration has already been provided.
+
+Use:
+
+NEXT_PUBLIC_SUPABASE_URL=https://mcrkavvinthyinosdepa.supabase.co
+
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_0hN09HSSUUCaTbAgAdUI1Q_9AdCY8Ej
+
+Do NOT ask me for these again.
+
+The Gemini API key has NOT been provided.
+
+The ONLY credential you must ask me for during the build is the Gemini API key.
+
+When the Gemini integration is ready, pause and ask:
+
+"Please provide your Gemini API key. I will add it securely as a Replit Secret."
+
+Wait for my answer.
+
+Do NOT:
+
+- Invent a Gemini key
+- Generate a fake Gemini key
+- Put a fake Gemini key in code
+- Ask me to put the key in source code
+- Expose the key to the frontend
+- Commit the key to GitHub
+- Print the key in logs
+
+After I provide it, configure:
+
+GEMINI_API_KEY
+
+through Replit Secrets.
+
+---
+
+# 63. START NOW
+
+Start building the complete application NOW.
+
+Do not stop at planning.
+
+Do not only create UI.
+
+Do not create a static prototype.
+
+Do not create fake data for core functionality.
+
+Implement the actual:
+
+React frontend
++
+Express backend
++
+JWT authentication
++
+bcrypt password hashing
++
+Supabase PostgreSQL
++
+CRUD operations
++
+Skill matching engine
++
+Search/filtering
++
+Saved jobs
++
+Skill-gap analysis
++
+Secure Gemini backend integration
++
+Zod validation
++
+GitHub-ready repository
++
+Render backend deployment readiness
++
+Vercel frontend deployment readiness.
+
+The final application must be:
+
+# SKILLMATCH AI
+
+For:
+
+# J2 — SKILL-BASED JOB MATCHING PLATFORM
+
+Tagline:
+
+# "Find the right job based on your skills — not just your job title."
+
+Build it now.
